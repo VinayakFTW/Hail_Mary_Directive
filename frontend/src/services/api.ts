@@ -186,6 +186,25 @@ class ApiService {
     }
   }
 
+  public async endGameSession(sessionId: number): Promise<ApiResponse<GameSession>> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/game/end_game/${sessionId}`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to deactivate tactical channel');
+      this.isBackendOnline = true;
+      return await res.json();
+    } catch (error) {
+      this.isBackendOnline = false;
+      const session = this.mockSessions.find((s) => s.session_id === sessionId);
+      if (session) {
+        session.is_active = false;
+        return { data: session, message: 'Channel deactivated [SIMULATED]' };
+      }
+      throw new Error('Session not found in tactical network.');
+    }
+  }
+
   public async getAllGames(): Promise<ApiResponse<GameSession[]>> {
     try {
       const res = await fetch(`${API_BASE_URL}/game/all`);

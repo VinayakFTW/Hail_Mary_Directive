@@ -16,6 +16,7 @@ interface GameContextType {
   selectSession: (sessionId: number) => Promise<void>;
   createSession: (userEmails: string[]) => Promise<GameSession | null>;
   startSession: (sessionId: number) => Promise<boolean>;
+  endSession: (sessionId: number) => Promise<boolean>;
   sendMessage: (messageText: string) => Promise<ChatMessage | null>;
   refreshSessions: () => Promise<void>;
   refreshMessages: () => Promise<void>;
@@ -179,6 +180,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const endSession = async (sessionId: number): Promise<boolean> => {
+    setError(null);
+    try {
+      const res = await api.endGameSession(sessionId);
+      if (res && res.data) {
+        soundFx.playAlert();
+        await refreshSessions();
+        return true;
+      }
+      return false;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to deactivate session';
+      setError(msg);
+      soundFx.playAlert();
+      return false;
+    }
+  };
+
   const sendMessage = async (messageText: string): Promise<ChatMessage | null> => {
     if (!activeSession || !currentUser) return null;
     setIsSendingMessage(true);
@@ -222,6 +241,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         selectSession,
         createSession,
         startSession,
+        endSession,
         sendMessage,
         refreshSessions,
         refreshMessages,

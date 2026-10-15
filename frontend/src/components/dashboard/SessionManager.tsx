@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { TacticalCard } from '../ui/TacticalCard';
 import { GlowingButton } from '../ui/GlowingButton';
 import { StatusBadge } from '../ui/StatusBadge';
-import { Plus, Play, MessageSquare, Users, ShieldAlert, ShieldCheck, X } from 'lucide-react';
+import { Plus, Play, MessageSquare, Users, ShieldAlert, ShieldCheck, X, PowerOff } from 'lucide-react';
 import { soundFx } from '../../services/audio';
 
 interface SessionManagerProps {
@@ -19,6 +19,7 @@ export const SessionManager: React.FC<SessionManagerProps> = ({ onOpenComms }) =
     selectSession,
     createSession,
     startSession,
+    endSession,
     allUsers,
   } = useGame();
 
@@ -60,6 +61,10 @@ export const SessionManager: React.FC<SessionManagerProps> = ({ onOpenComms }) =
 
   const handleActivateGame = async (sessionId: number) => {
     await startSession(sessionId);
+  };
+
+  const handleEndGame = async (sessionId: number) => {
+    await endSession(sessionId);
   };
 
   const handleJoinComms = (sessionId: number) => {
@@ -209,13 +214,25 @@ export const SessionManager: React.FC<SessionManagerProps> = ({ onOpenComms }) =
 
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {!session.is_active && (
+                  {session.is_active ? (
+                    <GlowingButton
+                      size="sm"
+                      variant="danger"
+                      icon={<PowerOff size={12} />}
+                      onClick={() => handleEndGame(session.session_id)}
+                      style={{ flex: 1 }}
+                      title="Deactivate / End Session"
+                    >
+                      DEACTIVATE
+                    </GlowingButton>
+                  ) : (
                     <GlowingButton
                       size="sm"
                       variant="outline"
                       icon={<Play size={12} />}
                       onClick={() => handleActivateGame(session.session_id)}
                       style={{ flex: 1 }}
+                      title="Activate Session"
                     >
                       ACTIVATE
                     </GlowingButton>
