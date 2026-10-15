@@ -12,6 +12,11 @@ STATIC_TEXT = SimpleNamespace(
     USER_CREATION_FAILED="Failed to create user",)
 
 async def create_user(user_data: SignupRequest):
+    if not user_data.email or "@" not in user_data.email or "." not in user_data.email.split("@")[-1]:
+        return server_response(
+            status_code=CONFLICT,
+            message="Invalid email address format.",
+        )
     with Session(Engine) as db:
         try:
             existing_user = db.query(Users).filter(Users.email == user_data.email).first()

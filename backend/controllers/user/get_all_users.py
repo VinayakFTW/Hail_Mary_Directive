@@ -17,8 +17,9 @@ async def get_all_users():
             users = db.query(Users).all()
             if not users:
                 return server_response(
-                    status_code=NOT_FOUND,
+                    status_code=SUCCESS,
                     message=STATIC_TEXT.NO_USERS_FOUND,
+                    data=[],
                 )
 
             user_list = [

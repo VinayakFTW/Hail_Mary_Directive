@@ -10,11 +10,24 @@ server = FastAPI(title="Directive Server", version="0.1.0")
 server.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+@server.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "service": "Directive Tactical Server",
+        "version": "0.1.0",
+    }
+
 server.include_router(CHAT_ROUTER)
 server.include_router(GAME_ROUTER)
 server.include_router(USER_ROUTER)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:server", host="0.0.0.0", port=8000, reload=True)

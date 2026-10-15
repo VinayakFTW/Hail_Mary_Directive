@@ -49,6 +49,5 @@ class LLMRouter:
         except Exception:
             return {
                 "status_code": SUCCESS,
-                "assistant_message": user_message,
                 "tampered": False,
             }

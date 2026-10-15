@@ -2,7 +2,7 @@ import os
 from types import SimpleNamespace
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=r"D:\CodexCommunication\Hail_Mary_Directive\backend\.env")
+load_dotenv(dotenv_path= os.getcwd() + r"\.env")
 
 ENVIRONMENT_VARIABLES = SimpleNamespace(
     OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY"),

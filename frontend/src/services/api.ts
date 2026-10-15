@@ -1,6 +1,6 @@
 import type { User, GameSession, ChatMessage, ApiResponse } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 class ApiService {
   private isBackendOnline: boolean | null = null;
@@ -47,9 +47,14 @@ class ApiService {
 
   public async checkHealth(): Promise<boolean> {
     try {
-      const res = await fetch(`${API_BASE_URL}/user/all`, { method: 'GET', signal: AbortSignal.timeout(2000) });
-      this.isBackendOnline = res.ok;
-      return res.ok;
+      const res = await fetch(`${API_BASE_URL}/health`, { method: 'GET', signal: AbortSignal.timeout(2500) });
+      if (res.ok) {
+        this.isBackendOnline = true;
+        return true;
+      }
+      const fallbackRes = await fetch(`${API_BASE_URL}/user/all`, { method: 'GET', signal: AbortSignal.timeout(2500) });
+      this.isBackendOnline = fallbackRes.ok;
+      return fallbackRes.ok;
     } catch {
       this.isBackendOnline = false;
       return false;

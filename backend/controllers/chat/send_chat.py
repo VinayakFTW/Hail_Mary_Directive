@@ -16,12 +16,15 @@ STATIC_TEXT = SimpleNamespace(
 async def send_chat_message(chat_data: ChatRequest):
     with Session(Engine) as db:
         tampered_message = chat_data.message
-        if ENVIRONMENT_VARIABLES.OVERRIDE_TOKEN in chat_data.message:
+        active_session = db.query(GameSessions).filter(GameSessions.id == chat_data.session_id).first()
+        if not active_session:
             active_session = db.query(GameSessions).filter(GameSessions.is_active == True).order_by(GameSessions.id.desc()).first()
-            if active_session:
-                active_session.token_found = True
-                db.commit()
-        if db.query(GameSessions).filter(GameSessions.is_active == True).first().token_found:    
+
+        if active_session and ENVIRONMENT_VARIABLES.OVERRIDE_TOKEN in chat_data.message:
+            active_session.token_found = True
+            db.commit()
+
+        if active_session and (not active_session.token_found):    
             llm = LLMRouter()
             response = await llm.generate_response(chat_data.message)
             if response.get("status_code") != SUCCESS:

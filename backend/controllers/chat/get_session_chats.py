@@ -22,9 +22,13 @@ async def get_session_chats(session_id: int):
 
             chat_messages_data = [
                 {
+                    "id": message.id,
                     "session_id": message.session_id,
+                    "user_mail": message.user_mail,
                     "original_message": message.original_message,
-                    "delivered_message": message.delivered_message, }
+                    "delivered_message": message.delivered_message,
+                    "created_at": message.created_at.isoformat() if message.created_at else None,
+                }
                 for message in chat_messages
             ]
 

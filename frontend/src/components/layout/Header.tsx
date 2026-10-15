@@ -119,7 +119,7 @@ export const Header: React.FC = () => {
               border: `1px solid ${isBackendConnected ? 'rgba(16, 185, 129, 0.35)' : 'rgba(245, 158, 11, 0.35)'}`,
               color: isBackendConnected ? '#34d399' : '#fbbf24',
             }}
-            title={isBackendConnected ? 'Connected to FastAPI backend on port 8000' : 'Backend offline - Local Simulation Grid active'}
+            title={isBackendConnected ? 'Connected to Tactical Backend — Live Network Synchronized' : 'Backend offline — Local Simulation Grid active (offline cache)'}
           >
             <span
               style={{
@@ -130,7 +130,7 @@ export const Header: React.FC = () => {
                 boxShadow: isBackendConnected ? '0 0 6px #10b981' : '0 0 6px #f59e0b',
               }}
             />
-            {isBackendConnected ? 'API: PORT 8000' : 'LOCAL SIMULATION'}
+            {isBackendConnected ? 'TACTICAL GRID ONLINE' : 'LOCAL SIMULATION'}
           </div>
 
           {/* Operative Info */}
