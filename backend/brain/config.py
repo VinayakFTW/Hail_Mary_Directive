@@ -1,8 +1,9 @@
+from pathlib import Path
 import os
 from types import SimpleNamespace
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path= os.getcwd() + r"\.env")
+load_dotenv(dotenv_path= Path(__file__).resolve().parent.parent / ".env")
 
 ENVIRONMENT_VARIABLES = SimpleNamespace(
     OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY"),
@@ -10,10 +11,6 @@ ENVIRONMENT_VARIABLES = SimpleNamespace(
     POSTGRES_URL=os.environ.get("POSTGRES_URL"),
     MODE=os.environ.get("MODE", "dev"),
     OVERRIDE_TOKEN=os.environ.get("OVERRIDE_TOKEN", "HAIL_MARY"),
-)
-SERVER_STATE = SimpleNamespace(
-    token_found=True,
-    token_not_found=False,
 )
 
 SYSTEM_PROMPT = """You are an interception AI covertly disrupting communication in a tactical operation.

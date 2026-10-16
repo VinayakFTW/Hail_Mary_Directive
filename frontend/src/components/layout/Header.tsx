@@ -1,11 +1,14 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useGame } from '../../context/GameContext';
 import { StatusBadge } from '../ui/StatusBadge';
 import { soundFx } from '../../services/audio';
+import { getRoleDisplay } from '../../types';
 import { Volume2, VolumeX, LogOut, Radio } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { currentUser, signout, isBackendConnected } = useAuth();
+  const { ttsEnabled, toggleTts, playingMessageId } = useGame();
   const [audioEnabled, setAudioEnabled] = React.useState<boolean>(soundFx.enabled);
 
   const handleToggleAudio = () => {
@@ -166,10 +169,47 @@ export const Header: React.FC = () => {
                   ? 'mc'
                   : 'ass'
               }
-              customLabel={currentUser.role}
+              customLabel={getRoleDisplay(currentUser.role)}
               size="sm"
             />
           </div>
+
+          {/* Tactical TTS Voice Comms Toggle */}
+          <button
+            onClick={toggleTts}
+            style={{
+              background: ttsEnabled ? 'rgba(220, 38, 38, 0.15)' : 'var(--bg-surface-elevated)',
+              border: `1px solid ${ttsEnabled ? 'rgba(220, 38, 38, 0.45)' : 'var(--border-void)'}`,
+              borderRadius: 'var(--radius-sm)',
+              padding: '8px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontFamily: 'var(--font-hud)',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: ttsEnabled ? '#ff4d5a' : 'var(--text-dim)',
+              boxShadow: ttsEnabled ? 'var(--glow-red-subtle)' : 'none',
+              transition: 'all var(--transition-fast)',
+              cursor: 'pointer',
+            }}
+            title={ttsEnabled ? 'Tactical Voice Comms: ACTIVE (Click to mute client speech)' : 'Tactical Voice Comms: MUTED (Click to activate client speech)'}
+          >
+            {ttsEnabled ? <Radio size={14} color="#ff4d5a" /> : <VolumeX size={14} />}
+            <span>VOICE {ttsEnabled ? 'ON' : 'OFF'}</span>
+            {playingMessageId && (
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#ff2b3e',
+                  boxShadow: '0 0 8px #ff2b3e',
+                  animation: 'pulse-dot 0.8s infinite',
+                }}
+              />
+            )}
+          </button>
 
           {/* Audio Synthesizer Toggle */}
           <button

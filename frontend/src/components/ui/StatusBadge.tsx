@@ -58,7 +58,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, customLabel, s
         };
       case 'mc':
         return {
-          label: customLabel || 'MISSION CONTROLLER',
+          label: customLabel || 'MISSION CONTROL',
           bg: 'rgba(168, 85, 247, 0.18)',
           border: 'rgba(168, 85, 247, 0.55)',
           text: '#c084fc',
@@ -67,7 +67,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, customLabel, s
         };
       case 'ass':
         return {
-          label: customLabel || 'TACTICAL ASSISTANT',
+          label: customLabel || 'ASTRONAUT',
           bg: 'rgba(56, 189, 248, 0.18)',
           border: 'rgba(56, 189, 248, 0.55)',
           text: '#7dd3fc',

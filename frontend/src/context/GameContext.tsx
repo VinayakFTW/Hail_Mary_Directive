@@ -3,6 +3,7 @@ import type { GameSession, ChatMessage, User } from '../types';
 import { api } from '../services/api';
 import { useAuth } from './AuthContext';
 import { soundFx } from '../services/audio';
+import { ttsService, type TTSState } from '../services/tts';
 
 interface GameContextType {
   sessions: GameSession[];
@@ -13,6 +14,12 @@ interface GameContextType {
   isLoadingMessages: boolean;
   isSendingMessage: boolean;
   error: string | null;
+  ttsEnabled: boolean;
+  playingMessageId: string | number | null;
+  loadingMessageId: string | number | null;
+  toggleTts: () => boolean;
+  playMessageVoice: (id: string | number, text: string) => Promise<void>;
+  stopMessageVoice: () => void;
   selectSession: (sessionId: number) => Promise<void>;
   createSession: (userEmails: string[]) => Promise<GameSession | null>;
   startSession: (sessionId: number) => Promise<boolean>;
@@ -36,8 +43,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [ttsState, setTtsState] = useState<TTSState>(() => ttsService.getState());
 
   const prevMessageCountRef = useRef<number>(0);
+
+  // Synchronize TTS reactive state
+  useEffect(() => {
+    return ttsService.subscribe((state) => {
+      setTtsState(state);
+    });
+  }, []);
 
   // Load all sessions
   const refreshSessions = useCallback(async () => {
@@ -92,6 +107,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (processed.length > prevMessageCountRef.current && prevMessageCountRef.current > 0) {
           // Play incoming audio
           soundFx.playTransmit();
+
+          // Auto-readout newly arrived message via client speakers if TTS is enabled
+          const newMessages = processed.slice(prevMessageCountRef.current);
+          const latestNew = newMessages[newMessages.length - 1];
+          if (latestNew && ttsService.isEnabled()) {
+            const spokenText = latestNew.delivered_message || latestNew.original_message;
+            const msgId = latestNew.id ?? latestNew.created_at ?? `msg_${Date.now()}`;
+            ttsService.playMessage(msgId, spokenText, {
+              sessionId: activeSession.session_id,
+              userMail: latestNew.user_mail,
+            }).catch(() => {});
+          }
         }
         prevMessageCountRef.current = processed.length;
         setMessages(processed);
@@ -122,6 +149,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [activeSession?.session_id, refreshMessages, refreshSessions]);
 
   const selectSession = async (sessionId: number) => {
+    ttsService.stop();
     const isAllowed = (s: GameSession) =>
       currentUser?.role === 'ADMIN' || (currentUser?.email ? s.users?.includes(currentUser.email) : false);
 
@@ -227,6 +255,28 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearError = () => setError(null);
 
+  const toggleTts = useCallback(() => {
+    soundFx.playKeyClick();
+    return ttsService.toggle();
+  }, []);
+
+  const playMessageVoice = useCallback(
+    async (id: string | number, text: string) => {
+      soundFx.playKeyClick();
+      await ttsService.playMessage(id, text, {
+        sessionId: activeSession?.session_id,
+        userMail: currentUser?.email,
+        force: true,
+      });
+    },
+    [activeSession?.session_id, currentUser?.email]
+  );
+
+  const stopMessageVoice = useCallback(() => {
+    soundFx.playKeyClick();
+    ttsService.stop();
+  }, []);
+
   return (
     <GameContext.Provider
       value={{
@@ -238,6 +288,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoadingMessages,
         isSendingMessage,
         error,
+        ttsEnabled: ttsState.enabled,
+        playingMessageId: ttsState.playingId,
+        loadingMessageId: ttsState.loadingId,
+        toggleTts,
+        playMessageVoice,
+        stopMessageVoice,
         selectSession,
         createSession,
         startSession,

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { TacticalCard } from '../ui/TacticalCard';
 import { GlowingButton } from '../ui/GlowingButton';
 import { StatusBadge } from '../ui/StatusBadge';
+import { getRoleDisplay } from '../../types';
 import { Plus, Play, MessageSquare, Users, ShieldAlert, ShieldCheck, X, PowerOff } from 'lucide-react';
 import { soundFx } from '../../services/audio';
 
@@ -365,7 +366,7 @@ export const SessionManager: React.FC<SessionManagerProps> = ({ onOpenComms }) =
                           </div>
                           <StatusBadge
                             status={user.role === 'ADMIN' ? 'admin' : user.role === 'MC' ? 'mc' : 'ass'}
-                            customLabel={user.role}
+                            customLabel={getRoleDisplay(user.role)}
                             size="sm"
                           />
                         </div>

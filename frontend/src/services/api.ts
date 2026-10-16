@@ -293,10 +293,32 @@ class ApiService {
       if (!res.ok) throw new Error('Failed to retrieve channel log');
       this.isBackendOnline = true;
       return await res.json();
-    } catch (error) {
+    } catch {
       this.isBackendOnline = false;
       const list = this.mockMessages[sessionId] || [];
       return { data: list, message: 'Messages loaded from local comms relay' };
+    }
+  }
+
+  public async synthesizeSpeech(message: string, sessionId?: number, userMail?: string): Promise<Blob | null> {
+    if (!message || !message.trim()) return null;
+    try {
+      const res = await fetch(`${API_BASE_URL}/chat/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: message.trim(),
+          session_id: sessionId ?? 0,
+          user: userMail ?? '',
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`TTS synthesis failed with status ${res.status}`);
+      }
+      this.isBackendOnline = true;
+      return await res.blob();
+    } catch {
+      return null;
     }
   }
 }

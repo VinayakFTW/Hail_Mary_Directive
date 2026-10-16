@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { ChatMessage, UserRole } from '../../types';
-import { AlertTriangle, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { useGame } from '../../context/GameContext';
+import { AlertTriangle, ShieldCheck, Eye, EyeOff, Volume2, VolumeX, RefreshCw } from 'lucide-react';
 
 interface MessageEntryProps {
   message: ChatMessage;
@@ -14,6 +15,12 @@ export const MessageEntry: React.FC<MessageEntryProps> = ({
   isCurrentUser,
 }) => {
   const [showAdminDiff, setShowAdminDiff] = useState<boolean>(false);
+  const { playMessageVoice, stopMessageVoice, playingMessageId, loadingMessageId } = useGame();
+
+  const messageId = message.id ?? message.created_at ?? message.original_message;
+  const isSpeaking = playingMessageId === messageId;
+  const isLoadingVoice = loadingMessageId === messageId;
+  const textToSpeak = message.delivered_message || message.original_message;
 
   const isTampered =
     message.tampered ??
@@ -124,6 +131,56 @@ export const MessageEntry: React.FC<MessageEntryProps> = ({
         <span>•</span>
         <span>{formattedTime}</span>
 
+        {/* Tactical Voice Speaker Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isSpeaking) {
+              stopMessageVoice();
+            } else {
+              playMessageVoice(messageId, textToSpeak);
+            }
+          }}
+          disabled={isLoadingVoice}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            color: isSpeaking ? '#ffffff' : isLoadingVoice ? '#fbbf24' : 'var(--text-silver)',
+            background: isSpeaking
+              ? 'linear-gradient(135deg, rgba(220, 38, 38, 0.5) 0%, rgba(185, 28, 28, 0.7) 100%)'
+              : 'rgba(255, 255, 255, 0.06)',
+            border: `1px solid ${isSpeaking ? 'var(--accent-red-bright)' : 'var(--border-subtle)'}`,
+            padding: '2px 8px',
+            borderRadius: 'var(--radius-xs)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            cursor: 'pointer',
+            boxShadow: isSpeaking ? 'var(--glow-red-subtle)' : 'none',
+            transition: 'all var(--transition-fast)',
+          }}
+          title={isSpeaking ? 'Stop voice transmission' : 'Play transmission through client speakers'}
+        >
+          {isLoadingVoice ? (
+            <RefreshCw size={11} className="spin-anim" />
+          ) : isSpeaking ? (
+            <VolumeX size={11} color="#ffffff" />
+          ) : (
+            <Volume2 size={11} />
+          )}
+          <span>{isLoadingVoice ? 'SYNTHESIZING...' : isSpeaking ? 'STOP VOICE' : 'VOICE'}</span>
+
+          {isSpeaking && (
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '10px', marginLeft: '2px' }}>
+              <span style={{ width: '2px', background: '#ff4d5a', borderRadius: '1px', animation: 'soundwave-bar 0.8s infinite ease-in-out' }} />
+              <span style={{ width: '2px', background: '#ff4d5a', borderRadius: '1px', animation: 'soundwave-bar 0.8s infinite ease-in-out 0.2s' }} />
+              <span style={{ width: '2px', background: '#ff4d5a', borderRadius: '1px', animation: 'soundwave-bar 0.8s infinite ease-in-out 0.4s' }} />
+            </div>
+          )}
+        </button>
+
         {/* If Admin, show indicator if tampered */}
         {currentUserRole === 'ADMIN' && isTampered && (
           <span
@@ -157,16 +214,23 @@ export const MessageEntry: React.FC<MessageEntryProps> = ({
             ? 'linear-gradient(135deg, rgba(30, 20, 25, 0.9) 0%, rgba(18, 14, 18, 0.95) 100%)'
             : 'var(--bg-glass-heavy)',
           border: `1px solid ${
-            isCurrentUser
+            isSpeaking
+              ? 'var(--accent-red-bright)'
+              : isCurrentUser
               ? 'rgba(220, 38, 38, 0.45)'
               : isTampered && currentUserRole === 'ADMIN'
               ? 'rgba(239, 68, 68, 0.5)'
               : 'var(--border-void)'
           }`,
-          boxShadow: isCurrentUser ? 'var(--glow-red-subtle)' : 'none',
+          boxShadow: isSpeaking
+            ? 'var(--glow-red-md)'
+            : isCurrentUser
+            ? 'var(--glow-red-subtle)'
+            : 'none',
           padding: '14px 18px',
           color: 'var(--text-white)',
           position: 'relative',
+          transition: 'border 0.2s ease, box-shadow 0.2s ease',
         }}
       >
         {/* Delivered text (what the operatives actually see in comms) */}

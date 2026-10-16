@@ -128,7 +128,7 @@ export const AuditMatrix: React.FC = () => {
             SECURITY CLEARANCE RESTRICTED // ACCESS DENIED
           </h2>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', fontSize: '13px', maxWidth: '480px', margin: '8px auto 0 auto' }}>
-            The Neural Interception Audit Matrix is restricted to Mission Control (MC) and Directive Administration (ADMIN). Tactical Assistants (ASS) are not permitted to inspect cryptographic intercept logs.
+            The Neural Interception Audit Matrix is restricted to Mission Control and Directive Administration (ADMIN). Astronauts are not permitted to inspect cryptographic intercept logs.
           </p>
         </TacticalCard>
       </div>

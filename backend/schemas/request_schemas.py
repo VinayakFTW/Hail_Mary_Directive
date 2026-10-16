@@ -16,3 +16,8 @@ class ChatRequest(BaseModel):
 
 class CreateGameSessionRequest(BaseModel):
     users: list[str]
+
+class TTSRequest(BaseModel):
+    message: str
+    user: str | None = None
+    session_id: int | None = None

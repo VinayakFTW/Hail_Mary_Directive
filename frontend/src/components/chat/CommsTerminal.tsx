@@ -5,7 +5,7 @@ import { MessageEntry } from './MessageEntry';
 import { StatusBadge } from '../ui/StatusBadge';
 import { GlowingButton } from '../ui/GlowingButton';
 import { soundFx } from '../../services/audio';
-import { Send, Users, Radio, RefreshCw, PowerOff, Play } from 'lucide-react';
+import { Send, Users, Radio, RefreshCw, PowerOff, Play, Volume2, VolumeX } from 'lucide-react';
 
 export const CommsTerminal: React.FC = () => {
   const {
@@ -19,6 +19,9 @@ export const CommsTerminal: React.FC = () => {
     selectSession,
     startSession,
     endSession,
+    ttsEnabled,
+    toggleTts,
+    playingMessageId,
   } = useGame();
   const { currentUser } = useAuth();
   const [inputText, setInputText] = useState<string>('');
@@ -204,6 +207,43 @@ export const CommsTerminal: React.FC = () => {
               ACTIVATE CHANNEL
             </button>
           )}
+
+          {/* Tactical TTS Voice Comms Toggle */}
+          <button
+            onClick={toggleTts}
+            style={{
+              background: ttsEnabled ? 'rgba(220, 38, 38, 0.18)' : 'rgba(255, 255, 255, 0.04)',
+              border: `1px solid ${ttsEnabled ? 'rgba(220, 38, 38, 0.5)' : 'var(--border-void)'}`,
+              borderRadius: 'var(--radius-xs)',
+              padding: '6px 12px',
+              color: ttsEnabled ? '#ff4d5a' : 'var(--text-dim)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: ttsEnabled ? 'var(--glow-red-subtle)' : 'none',
+              transition: 'all var(--transition-fast)',
+            }}
+            title={ttsEnabled ? 'Voice Comms: ACTIVE (Click to mute client speech readout)' : 'Voice Comms: MUTED (Click to activate client speech readout)'}
+          >
+            {ttsEnabled ? <Volume2 size={12} /> : <VolumeX size={12} />}
+            <span>VOICE COMMS: {ttsEnabled ? 'ACTIVE' : 'MUTED'}</span>
+            {playingMessageId && (
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#ff2b3e',
+                  boxShadow: '0 0 8px #ff2b3e',
+                  animation: 'pulse-dot 0.8s infinite',
+                }}
+              />
+            )}
+          </button>
 
           {/* Refresh Messages */}
           <button

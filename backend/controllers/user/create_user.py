@@ -9,10 +9,12 @@ from constants.server_codes import CREATED, INTERNAL_SERVER_ERROR, CONFLICT
 STATIC_TEXT = SimpleNamespace(
     USER_CREATED_SUCCESS="User created successfully",
     USER_ALREADY_EXISTS="User with this email already exists",
-    USER_CREATION_FAILED="Failed to create user",)
+    USER_CREATION_FAILED="Failed to create user",
+    ALLOWED_ADDRESSES=["gmail.com","yahoo.com","hotmail.com","sitpune.edu.in"]
+)
 
 async def create_user(user_data: SignupRequest):
-    if not user_data.email or "@" not in user_data.email or "." not in user_data.email.split("@")[-1]:
+    if user_data.email.split("@")[-1] not in STATIC_TEXT.ALLOWED_ADDRESSES:
         return server_response(
             status_code=CONFLICT,
             message="Invalid email address format.",

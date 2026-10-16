@@ -26,8 +26,3 @@ def health_check():
 server.include_router(CHAT_ROUTER)
 server.include_router(GAME_ROUTER)
 server.include_router(USER_ROUTER)
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:server", host="0.0.0.0", port=8000, reload=True)

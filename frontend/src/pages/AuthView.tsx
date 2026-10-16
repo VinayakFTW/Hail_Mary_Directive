@@ -4,14 +4,14 @@ import type { UserRole } from '../types';
 import { TacticalCard } from '../components/ui/TacticalCard';
 import { GlowingButton } from '../components/ui/GlowingButton';
 import { GlitchText } from '../components/effects/GlitchText';
-import { Radio, ShieldAlert, UserCheck, ChevronRight, Lock } from 'lucide-react';
+import { Radio, ShieldAlert, UserCheck, Lock } from 'lucide-react';
 
 export const AuthView: React.FC = () => {
   const { signin, signup, isLoading, error, clearError } = useAuth();
   const [isRegisterMode, setIsRegisterMode] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [name, setName] = useState<string>('');
-  const [role, setRole] = useState<UserRole>('ADMIN');
+  const [role, setRole] = useState<UserRole>('MC');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,11 +23,6 @@ export const AuthView: React.FC = () => {
       if (!email.trim()) return;
       await signin(email);
     }
-  };
-
-  const handleQuickDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    signin(demoEmail);
   };
 
   return (
@@ -176,25 +171,29 @@ export const AuthView: React.FC = () => {
                 >
                   SECURITY CLEARANCE ROLE:
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                  {(['ADMIN', 'MC', 'ASS'] as UserRole[]).map((r) => (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  {(['MC', 'ASS'] as UserRole[]).map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRole(r)}
                       style={{
-                        padding: '10px 6px',
+                        padding: '11px 8px',
                         background: role === r ? 'var(--accent-red-pure)' : 'rgba(255, 255, 255, 0.03)',
                         border: `1px solid ${role === r ? 'var(--accent-red-bright)' : 'var(--border-void)'}`,
                         borderRadius: 'var(--radius-xs)',
                         color: role === r ? '#ffffff' : 'var(--text-silver)',
                         fontFamily: 'var(--font-display)',
-                        fontSize: '12px',
+                        fontSize: '11px',
                         fontWeight: 700,
-                        letterSpacing: '1px',
+                        letterSpacing: '0.8px',
+                        textAlign: 'center',
+                        lineHeight: 1.2,
+                        cursor: 'pointer',
+                        transition: 'all var(--transition-fast)',
                       }}
                     >
-                      {r}
+                      {r === 'MC' ? 'MISSION CONTROL' : 'ASTRONAUT'}
                     </button>
                   ))}
                 </div>
@@ -203,12 +202,11 @@ export const AuthView: React.FC = () => {
                     fontFamily: 'var(--font-mono)',
                     fontSize: '10px',
                     color: 'var(--text-dim)',
-                    marginTop: '6px',
+                    marginTop: '8px',
                   }}
                 >
-                  {role === 'ADMIN' && 'ADMIN: Full command & raw AI tampering audit matrix inspection.'}
-                  {role === 'MC' && 'MC: Mission Controller, coordinates operational directives.'}
-                  {role === 'ASS' && 'ASS: Tactical Assistant Specialist with field channel access.'}
+                  {role === 'MC' && 'MISSION CONTROL: Coordinates operational directives.'}
+                  {role === 'ASS' && 'ASTRONAUT: Field operative with tactical channel access.'}
                 </div>
               </div>
             )}
@@ -253,71 +251,6 @@ export const AuthView: React.FC = () => {
             >
               {isRegisterMode ? 'Authenticate Callsign' : 'Enlist New Recruit'}
             </button>
-          </div>
-
-          {/* Quick Demo Credentials */}
-          <div
-            style={{
-              marginTop: '24px',
-              paddingTop: '18px',
-              borderTop: '1px solid var(--border-subtle)',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                color: 'var(--text-dim)',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Quick Operative Fast-Track:
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('shepard@normandy.alliance')}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '8px 12px',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid var(--border-void)',
-                  borderRadius: 'var(--radius-xs)',
-                  color: 'var(--text-silver)',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '11px',
-                  textAlign: 'left',
-                }}
-              >
-                <span>Commander Shepard <span style={{ color: 'var(--accent-red-bright)' }}>[ADMIN]</span></span>
-                <ChevronRight size={13} color="var(--accent-red-bright)" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('alpha@directive.space')}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '8px 12px',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid var(--border-void)',
-                  borderRadius: 'var(--radius-xs)',
-                  color: 'var(--text-silver)',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '11px',
-                  textAlign: 'left',
-                }}
-              >
-                <span>Operative Alpha <span style={{ color: '#c084fc' }}>[MC]</span></span>
-                <ChevronRight size={13} color="var(--accent-red-bright)" />
-              </button>
-            </div>
           </div>
         </TacticalCard>
       </div>

@@ -3,6 +3,7 @@ import { useGame } from '../../context/GameContext';
 import { useAuth } from '../../context/AuthContext';
 import { TacticalCard } from '../ui/TacticalCard';
 import { StatusBadge } from '../ui/StatusBadge';
+import { getRoleDisplay } from '../../types';
 import { RefreshCw } from 'lucide-react';
 import { soundFx } from '../../services/audio';
 
@@ -126,7 +127,7 @@ export const OperativesList: React.FC = () => {
 
               <StatusBadge
                 status={user.role === 'ADMIN' ? 'admin' : user.role === 'MC' ? 'mc' : 'ass'}
-                customLabel={user.role}
+                customLabel={getRoleDisplay(user.role)}
                 size="sm"
               />
             </div>
