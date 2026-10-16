@@ -215,28 +215,30 @@ export const SessionManager: React.FC<SessionManagerProps> = ({ onOpenComms }) =
 
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {session.is_active ? (
-                    <GlowingButton
-                      size="sm"
-                      variant="danger"
-                      icon={<PowerOff size={12} />}
-                      onClick={() => handleEndGame(session.session_id)}
-                      style={{ flex: 1 }}
-                      title="Deactivate / End Session"
-                    >
-                      DEACTIVATE
-                    </GlowingButton>
-                  ) : (
-                    <GlowingButton
-                      size="sm"
-                      variant="outline"
-                      icon={<Play size={12} />}
-                      onClick={() => handleActivateGame(session.session_id)}
-                      style={{ flex: 1 }}
-                      title="Activate Session"
-                    >
-                      ACTIVATE
-                    </GlowingButton>
+                  {isAdmin && (
+                    session.is_active ? (
+                      <GlowingButton
+                        size="sm"
+                        variant="danger"
+                        icon={<PowerOff size={12} />}
+                        onClick={() => handleEndGame(session.session_id)}
+                        style={{ flex: 1 }}
+                        title="Deactivate / End Session"
+                      >
+                        DEACTIVATE
+                      </GlowingButton>
+                    ) : (
+                      <GlowingButton
+                        size="sm"
+                        variant="outline"
+                        icon={<Play size={12} />}
+                        onClick={() => handleActivateGame(session.session_id)}
+                        style={{ flex: 1 }}
+                        title="Activate Session"
+                      >
+                        ACTIVATE
+                      </GlowingButton>
+                    )
                   )}
 
                   <GlowingButton

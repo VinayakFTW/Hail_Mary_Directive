@@ -192,6 +192,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const startSession = async (sessionId: number): Promise<boolean> => {
     setError(null);
+    if (currentUser?.role !== 'ADMIN') {
+      setError('Permission denied: Only Admin clearance can activate sessions');
+      soundFx.playAlert();
+      return false;
+    }
     try {
       const res = await api.startGameSession(sessionId);
       if (res && res.data) {
@@ -210,6 +215,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const endSession = async (sessionId: number): Promise<boolean> => {
     setError(null);
+    if (currentUser?.role !== 'ADMIN') {
+      setError('Permission denied: Only Admin clearance can deactivate sessions');
+      soundFx.playAlert();
+      return false;
+    }
     try {
       const res = await api.endGameSession(sessionId);
       if (res && res.data) {

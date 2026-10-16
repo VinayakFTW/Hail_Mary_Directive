@@ -153,59 +153,61 @@ export const CommsTerminal: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Deactivate or Activate Channel Button */}
-          {activeSession.is_active ? (
-            <button
-              onClick={() => {
-                soundFx.playKeyClick();
-                endSession(activeSession.session_id);
-              }}
-              style={{
-                background: 'rgba(220, 38, 38, 0.15)',
-                border: '1px solid rgba(220, 38, 38, 0.4)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '6px 12px',
-                color: '#ff4d5a',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-              title="Deactivate / End this tactical session"
-            >
-              <PowerOff size={12} />
-              DEACTIVATE CHANNEL
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                soundFx.playKeyClick();
-                startSession(activeSession.session_id);
-              }}
-              style={{
-                background: 'rgba(16, 185, 129, 0.15)',
-                border: '1px solid rgba(16, 185, 129, 0.4)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '6px 12px',
-                color: '#34d399',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-              title="Re-activate this tactical session"
-            >
-              <Play size={12} />
-              ACTIVATE CHANNEL
-            </button>
+          {/* Deactivate or Activate Channel Button (Admin Clearance Only) */}
+          {currentUser?.role === 'ADMIN' && (
+            activeSession.is_active ? (
+              <button
+                onClick={() => {
+                  soundFx.playKeyClick();
+                  endSession(activeSession.session_id);
+                }}
+                style={{
+                  background: 'rgba(220, 38, 38, 0.15)',
+                  border: '1px solid rgba(220, 38, 38, 0.4)',
+                  borderRadius: 'var(--radius-xs)',
+                  padding: '6px 12px',
+                  color: '#ff4d5a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-fast)',
+                }}
+                title="Deactivate / End this tactical session"
+              >
+                <PowerOff size={12} />
+                DEACTIVATE CHANNEL
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  soundFx.playKeyClick();
+                  startSession(activeSession.session_id);
+                }}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  borderRadius: 'var(--radius-xs)',
+                  padding: '6px 12px',
+                  color: '#34d399',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-fast)',
+                }}
+                title="Re-activate this tactical session"
+              >
+                <Play size={12} />
+                ACTIVATE CHANNEL
+              </button>
+            )
           )}
 
           {/* Tactical TTS Voice Comms Toggle */}
